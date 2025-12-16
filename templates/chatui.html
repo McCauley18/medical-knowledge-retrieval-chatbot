@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthBot AI - Medical Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <div class="container"> 
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>HealthBot AI</h1>
+                    <p>Your Intelligent Health Assistant</p>
+                </div>
+            </div>
+            <div class="header-info">
+                <div class="emergency-info">
+                    <i class="fas fa-phone-alt emergency-icon"></i>
+                    <span>Emergency: 10177</span>
+                </div>
+                <div class="time-display" id="current-time"></div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-info-circle"></i> Quick Info</h3>
+                    <div class="quick-tips">
+                        <div class="tip" onclick="quickSelect('headache')">
+                            <i class="fas fa-head-side-virus"></i>
+                            <span>Headache Advice</span>
+                        </div>
+                        <div class="tip" onclick="quickSelect('fever')">
+                            <i class="fas fa-thermometer-full"></i>
+                            <span>Fever Information</span>
+                        </div>
+                        <div class="tip" onclick="quickSelect('cough')">
+                            <i class="fas fa-lungs-virus"></i>
+                            <span>Cough Remedies</span>
+                        </div>
+                        <div class="tip" onclick="quickSelect('fatigue')">
+                            <i class="fas fa-tired"></i>
+                            <span>Fatigue Causes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-shield-alt"></i> Safety</h3>
+                    <div class="safety-notice">
+                        <p><strong>Remember:</strong> This chatbot provides information only, not medical advice.</p>
+                        <button class="btn-disclaimer" id="show-disclaimer">
+                            <i class="fas fa-exclamation-triangle"></i> View Full Disclaimer
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-history"></i> Recent Topics</h3>
+                    <div id="recent-topics">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Chat Container -->
+            <main class="chat-container">
+                <div class="chat-header">
+                    <h2><i class="fas fa-comment-medical"></i> Health Assistant Chat</h2>
+                    <div class="chat-actions">
+                        <button class="btn-action" id="clear-chat" title="Clear Conversation">
+                            <i class="fas fa-trash-alt"></i> Clear
+                        </button>
+                        <button class="btn-action" id="export-chat" title="Export Chat">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Messages Area -->
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Welcome message -->
+                    <div class="message bot-message welcome-message animate__animated animate__fadeIn">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-sender">HealthBot AI</div>
+                            <div class="message-text">
+                                <p>👋 Hello! I'm your AI health assistant.</p>
+                                <p>I can provide general health information and symptom guidance.</p>
+                                <p><strong>Please remember:</strong> I'm not a substitute for professional medical advice. For emergencies, call 10177 immediately.</p>
+                            </div>
+                            <div class="message-timestamp">Just now</div>
+                        </div>
+                    </div>
+
+                    <div class="message bot-message animate__animated animate__fadeIn">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-sender">HealthBot AI</div>
+                            <div class="message-text">
+                                <p>How can I help you today? You can describe your symptoms or ask about general health topics.</p>
+                                <div class="suggestion-chips">
+                                    <span class="chip" onclick="quickSelect('headache')">Headache</span>
+                                    <span class="chip" onclick="quickSelect('fever')">Fever</span>
+                                    <span class="chip" onclick="quickSelect('cough')">Cough</span>
+                                    <span class="chip" onclick="quickSelect('general health advice')">Health Tips</span>
+                                </div>
+                            </div>
+                            <div class="message-timestamp">Just now</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="chat-input-container">
+                    <div class="input-wrapper">
+                        <div class="input-icons">
+                            <button class="input-icon" title="Attach file" onclick="showToast('File attachment feature coming soon')">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button class="input-icon" title="Voice input" onclick="showToast('Voice input coming soon')">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                        <input type="text" 
+                               id="user-input" 
+                               placeholder="Describe your symptoms or ask a health question..."
+                               autocomplete="off"
+                               onkeypress="handleKeyPress(event)">
+                        <button id="send-button" class="btn-send">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                    <div class="input-footer">
+                        <div class="typing-indicator" id="typing-indicator">
+                            <i class="fas fa-circle"></i>
+                            <i class="fas fa-circle"></i>
+                            <i class="fas fa-circle"></i>
+                            <span>HealthBot AI is typing...</span>
+                        </div>
+                        <div class="privacy-notice">
+                            <i class="fas fa-lock"></i> Your conversations are private and secure
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>© 2025 HealthBot AI. For informational purposes only. Not a medical service.</p>
+                <div class="footer-links">
+                    <a href="#" onclick="showToast('Privacy policy page coming soon')">Privacy Policy</a>
+                    <a href="#" onclick="showToast('Terms of service page coming soon')">Terms of Service</a>
+                    <a href="#" onclick="showToast('Contact information coming soon')">Contact</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Disclaimer Modal -->
+    <div id="disclaimer-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Medical Disclaimer</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="disclaimer-content">
+                <!-- Content loaded via AJAX -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closeModal()">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
