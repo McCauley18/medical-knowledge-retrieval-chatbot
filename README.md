@@ -92,3 +92,8 @@ python app.py
 Then open your browser:
 
 http://127.0.0.1:8082
+
+Limitations
+
+- High latency due to server hosted in US
+- Using the google/flan-t5-base model with the current text2text-generation pipeline is constrained by its relatively small model size, limited context window, and deterministic decoding (temperature=0.1, do_sample=False), which may result in less nuanced or creative responses and reduced performance on complex or highly contextual tasks.
